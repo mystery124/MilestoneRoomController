@@ -12,19 +12,7 @@
 const char *ssid = STASSID;
 const char *password = STAPSK;
 
-void setup()
-{
-  Serial.begin(115200);
-  Serial.println("Booting");
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED)
-  {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
-  }
-
+void otaSetup(){
   // Port defaults to 8266
   // ArduinoOTA.setPort(8266);
 
@@ -82,12 +70,32 @@ void setup()
     }
   });
   ArduinoOTA.begin();
+}
+
+void handleOTA(){
+  ArduinoOTA.handle();
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  Serial.println("Booting");
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  while (WiFi.waitForConnectResult() != WL_CONNECTED)
+  {
+    Serial.println("Connection Failed! Rebooting...");
+    delay(5000);
+    ESP.restart();
+  }
+
+  otaSetup();
+
   Serial.println("Ready");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 }
 
-void loop()
-{
-  ArduinoOTA.handle();
+void loop(){
+  handleOTA();
 }
