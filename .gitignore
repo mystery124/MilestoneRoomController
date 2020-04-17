@@ -32,10 +32,5 @@
 *.app
 
 
-<<<<<<< HEAD
 .pio/build/
 .pio/libdeps/
-=======
-.pio/build
-.pio/libdeps
->>>>>>> master

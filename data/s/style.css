@@ -1,0 +1,202 @@
+body {
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.25;
+}
+div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+/*
+.wifilisttable{
+    border-collapse: collapse;
+    width: 100%;
+}
+.wifilisttable .col {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+*/
+.wifilisttable tr:nth-child(odd) {
+  background-color: white;
+}
+.wifilisttable tr:hover {
+  background-color: #ddd;
+}
+.wifilisttable th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #4caf50;
+  color: white;
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.wifilisttable {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.wifilisttable caption {
+  font-size: 1.5em;
+  margin: 0.5em 0 0.75em;
+}
+
+.wifilisttable tr {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  padding: 0.35em;
+}
+
+.wifilisttable td {
+  padding: 0.625em;
+  text-align: center;
+}
+
+.wifilisttable .blank {
+    width: 50%;
+}
+
+@media screen and (max-width: 600px) {
+    .wifilisttable {
+        border: 0;
+    }
+
+  .wifilisttable caption {
+    font-size: 1.3em;
+  }
+
+  .wifilisttable thead {
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  .wifilisttable tr {
+    border-bottom: 3px solid #ddd;
+    display: block;
+    margin-bottom: 0.625em;
+    text-align: center;
+  }
+
+  .wifilisttable td {
+    border-bottom: 1px solid #ddd;
+    display: block;
+    font-size: 0.8em;
+    text-align: right;
+  }
+
+  .wifilisttable td::before {
+    /*
+      * aria-label has no advantage, it won't be read inside a table
+      content: attr(aria-label);
+      */
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .wifilisttable td:last-child {
+    border-bottom: 0;
+  }
+}
+.submitForm input[type="text"],
+.submitForm input[type="password"] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type="button"].restart {
+  background-color: #ce6504fb;
+}
+
+input[type="button"].submit {
+  background-color: #4caf50;
+}
+
+input[type="button"] {
+  width: 100%;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type="button"].submit:hover {
+  background-color: #45a049;
+}
+
+input[type="button"].restart:hover {
+  background-color: #a85405fb;
+}
+
+.toast {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  top: 100px;
+}
+
+.toast.success {
+  background-color: #45a049;
+}
+
+.toast.fail {
+  background-color: rgb(255, 0, 0);
+}
+
+.toast.warning {
+  background-color: rgb(255, 230, 0);
+}
+
+.toast.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 100px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 100px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {top: 100px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {top: 100px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}

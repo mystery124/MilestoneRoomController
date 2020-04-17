@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="data:,">
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body id="formBody">
+        <div class="networkList">
+            <input type="button" class="submit" onclick="loadSSIDs()" value="Scan" >
+            <table class="wifilisttable">
+                <caption>WiFi Networks</caption>
+                <thead>
+                    <tr>
+                      <th scope="col" class="col">SSID</th>
+                      <th scope="col" class="col">Public</th>
+                      <th scope="col" class="col">Signal</th>
+                      <th scope="col" class="col">Channel</th>
+                    </tr>
+                </thead>
+                <tbody id="wifilist">
+                    <tr>
+                        <td class="col" colspan="4">No items</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="submitForm">
+            <label for="ssid">SSID:</label><br>
+            <input class="ssid" type="text" id="ssid" placeholder="SSID">
+            <label for="pass">Password:</label><br>
+            <input class="pass" type="password" id="pass" placeholder="Password">
+            <label for="pass">Device Name:</label><br>
+            <input class="pass" type="text" id="name" placeholder="Name">
+            <input type="button" id="submit" class="submit" value="Submit" onclick="submit();">
+        </div>
+        <div>
+            <input type="button" id="restart" class="restart" value="Restart" onclick="restart();">
+        </div>
+        <div class="toast success">Success</div>
+        <div class="toast fail">Failed</div>
+        <div class="toast warning">Missing Fields</div>
+    </body>
+    <script src="main.js"></script>
+</html>
