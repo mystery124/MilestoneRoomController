@@ -17,11 +17,12 @@ namespace WiFiManagment {
 
         void startWifi();
         void handleClient();
+        void attachConnectionHandler(std::function<void(void)>);
     private:
         void handleNoConnection();
         void handleConnection();
-        void attachConnectionHandler(std::function<void(void)>);
         int connectionAttempts = 0;
+        int connectionAttemptsAllowed = 10;
         WiFiService *wifiService;
         ConfigFileService cFileService;
         WifiMode mode;

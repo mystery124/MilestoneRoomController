@@ -7,6 +7,8 @@ StationModeService::StationModeService(std::function<void(void)> onDisconected, 
     onStationModeConnected = onConnected;
 };
 
+StationModeService::~StationModeService(){};
+
 void StationModeService::startWifi(){
     ConfigFile cFile = cFileService.readConfigFile();
     startMDNS();
@@ -50,4 +52,5 @@ String StationModeService::getLocation(){
 
 void StationModeService::resetDevice(){
     cFileService.deleteConfigFile();
+    webServer.send(200, "text/plain", "OK");
 }

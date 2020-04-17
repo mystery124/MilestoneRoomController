@@ -16,6 +16,7 @@ namespace WiFiManagment {
     class StationModeService : public WiFiService {
     public:
         StationModeService(std::function<void(void)> onDisconected, std::function<void(void)> onConnected);
+        ~StationModeService();
         virtual void startWifi();
     private:
         virtual void startServer();

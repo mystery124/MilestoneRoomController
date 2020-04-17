@@ -193,6 +193,10 @@ void printBME280Values() {
 }
 */
 
+void pinOn(){
+    digitalWrite(LED_BUILTIN, LOW);
+}
+
 WiFiManagment::WifiManager wifiService;
 
 void setup(){
@@ -200,6 +204,7 @@ void setup(){
     digitalWrite(LED_BUILTIN, HIGH);
     LOGGER
     LOG("Start WIFI");
+    wifiService.attachConnectionHandler(pinOn);
     wifiService.startWifi();
     LOG("config WIFI done");
 }

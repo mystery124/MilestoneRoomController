@@ -22,8 +22,9 @@ void WifiManager::handleClient(){
 
 void WifiManager::handleNoConnection(){
     connectionAttempts++;
-    if(connectionAttempts > 10 ){
+    if(connectionAttempts > connectionAttemptsAllowed ){
         cFileService.deleteConfigFile();
+        delete wifiService;
         startWifi();
     }
 }

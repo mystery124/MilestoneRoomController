@@ -4,6 +4,8 @@ using namespace WiFiManagment;
 
 WiFiService::WiFiService():webServer(80), dnsServer() {};
 
+WiFiService::~WiFiService(){};
+
 bool WiFiService::startMDNS(){
     bool result = MDNS.begin(defaultDeviceName);
     MDNS.addService("http", "tcp", 80);

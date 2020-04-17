@@ -18,6 +18,7 @@ namespace WiFiManagment {
     class WiFiService {
         public:
         WiFiService();
+        virtual ~WiFiService();
         virtual void startWifi() = 0;
         virtual String getLocation() = 0;
         virtual void handleClient();

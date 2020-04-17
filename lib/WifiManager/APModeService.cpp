@@ -2,6 +2,8 @@
 
 using namespace WiFiManagment;
 
+APModeService::~APModeService(){};
+
 void APModeService::startWifi(){
     startAPwifi();
     startMDNS();

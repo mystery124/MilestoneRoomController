@@ -16,6 +16,7 @@ namespace WiFiManagment {
 
     class APModeService : public WiFiService {
     public:
+        ~APModeService();
         virtual void startWifi();
     private:
         virtual String getLocation();
