@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <FS.h>
 #include <Ticker.h>
 
 #define LOGGING_SERIAL
@@ -6,30 +7,16 @@
 
 #include "WifiManager.h"
 #include "BME280Sensor.h"
-
+#include "EasyWebServer.h"
 
 
 
 /*
 
-#include <ESP8266WebServer.h>
-#include <WiFiClient.h>
-#include <ArduinoJson.h>
-
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BME280.h>
-
 //local
 #include <OTAHandler.h>
 
-
-#define SEALEVELPRESSURE_HPA (1013.25)
-
 OTAHandler otaHandler;
-
-ESP8266WebServer server(80);
-
-Adafruit_BME280 bme;
 
 
 // hold uploaded file
@@ -59,58 +46,94 @@ void handleFileUpload(){
 */
 
 void pinOn();
-
 void readSensorAndPrint();
+void serverAttatch();
 void goToSleep();
+void readSensor();
 
-WiFiManagment::WifiManager wifiService;
+WebServer::EasyWebServer webServer = WebServer::EasyWebServer(80);
+WiFiManagment::WifiManager wifiService = WiFiManagment::WifiManager(webServer);
 Sensors::BME280Sensor bmeSensor;
 bool sendFlag = false;
 Ticker tick;
+Sensors::BME20SensorData sensorData;
 
 void setup(){
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
+    SPIFFS.begin();
     LOGGER
+
+    LOG("BME280 sensor read");
     bmeSensor.init();
+    //bmeSensor.setMode(Adafruit_BME280::MODE_NORMAL);
+    sensorData = bmeSensor.read();
+    //bmeSensor.setMode(Adafruit_BME280::MODE_SLEEP);
+    LOG("BME280 sensor read - done");
+
     LOG("Start WIFI");
     wifiService.attachConnectionHandler(pinOn);
     wifiService.attachConnectionHandler(readSensorAndPrint);
+    wifiService.attachConnectionHandler(serverAttatch);
     wifiService.startWifi();
     LOG("config WIFI done");
-    tick.attach(30, goToSleep);
+
+    LOG("Web Server start");
+    webServer.startServer();
+    LOG("Web Server - done");
+
+    //tick.attach(30, goToSleep);
 }
 
 void loop(){
     wifiService.handleClient();
+    webServer.handleClient();
     //otaHandler.handleOTA();
-    //server.handleClient();
     LOGGER;
     if(sendFlag){
-        goToSleep();
+        //goToSleep();
     }
 }
 
 void goToSleep(){
     int val = 60;
-    LOG("Going Sleep");
-    ESP.deepSleep(val*1000*1000);
+    LOG("goToSleep");
+    WiFi.disconnect(true);
+    delay( 1 );
+    ESP.deepSleep(val*1000*1000, WAKE_RF_DISABLED);
 }
 
 void readSensorAndPrint(){
     LOGGER;
-    bmeSensor.setMode(Adafruit_BME280::MODE_NORMAL);
-    Sensors::BME20SensorData data = bmeSensor.read();
-    bmeSensor.setMode(Adafruit_BME280::MODE_SLEEP);
     LOG("Temp: ");
-    LOG(data.temperature);
+    LOG(sensorData.temperature);
     LOG("Humidity: ");
-    LOG(data.humidity);
+    LOG(sensorData.humidity);
     LOG("Pressure: ");
-    LOG(data.pressure);
+    LOG(sensorData.pressure);
     sendFlag = true;
 };
 
 void pinOn(){
     digitalWrite(LED_BUILTIN, LOW);
 };
+
+void serverAttatch(){
+    webServer.attachCallStaticHandler("/", SPIFFS, "/sensor/index.html");
+    webServer.attachCallStaticHandler("/sensor/main.js", SPIFFS, "/sensor/main.js");
+    webServer.attachCallStaticHandler("/sensor/bootstrap.min.css", SPIFFS, "/sensor/bootstrap.min.css");
+    webServer.attachCallHandler("/sensor/readSensor", HTTP_GET, readSensor);
+}
+
+void readSensor(){
+   // bmeSensor.setMode(Adafruit_BME280::MODE_NORMAL);
+   // delay(100);
+    Sensors::BME20SensorData sData = bmeSensor.read();
+   // bmeSensor.setMode(Adafruit_BME280::MODE_SLEEP);
+    StaticJsonDocument<400> doc;
+    doc["temp"] =  sData.temperature;
+    doc["humid"] = sData.humidity;
+    doc["press"] =  sData.pressure;
+    String response = doc.as<String>();
+    webServer.sendServerResponse(200, "application/json", response); 
+}

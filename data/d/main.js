@@ -69,6 +69,7 @@ function submit(){
         }
         if(this.readyState == 4 && this.status == 200) {
             toast = document.getElementsByClassName("toast success")[0];
+            document.getElementById("redirect").value = "true";
         } else if(this.readyState == 4 && (this.status >= 400 || this.status < 200)){
             toast = document.getElementsByClassName("toast fail")[0];
         }
@@ -89,6 +90,8 @@ function submit(){
 function restart(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
+        let nodeName = document.getElementById("name").value;
+        let shouldRedirect = document.getElementById("redirect").value;
         let toast;
         if(this.readyState == 4 && this.status == 200) {
             toast = document.getElementsByClassName("toast success")[0];
@@ -100,6 +103,9 @@ function restart(){
             setTimeout(function(){ toast.classList.remove("show"); }, 1000);
         }
         setTimeout(function(){ document.getElementById("formBody").innerHTML = "<h1>Restarting...</h1>" }, 1000);
+        if(shouldRedirect === "true"){
+            setTimeout(function(){ window.location.replace("http://"+nodeName+".local"); }, 6000);
+        }
     };
     xhttp.open("POST", "/restart", true);
     xhttp.send();

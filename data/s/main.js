@@ -14,7 +14,7 @@ function restart(){
         }
         setTimeout(function(){ document.getElementById("formBody").innerHTML = "<h1>Restarting...</h1>" }, 1000);
     };
-    xhttp.open("POST", "/restart", true);
+    xhttp.open("POST", "/config/restart", true);
     xhttp.send();
 }
 
@@ -32,6 +32,6 @@ function reset(){
             setTimeout(function(){ toast.classList.remove("show"); }, 1000);
         }
     };
-    xhttp.open("POST", "/reset", true);
+    xhttp.open("POST", "/config/reset", true);
     xhttp.send();
 }

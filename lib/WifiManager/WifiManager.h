@@ -14,19 +14,22 @@ namespace WiFiManagment {
 
     class WifiManager {
     public:
-
+        WifiManager(WebServer::EasyWebServer&);
         void startWifi();
         void handleClient();
         void attachConnectionHandler(std::function<void(void)>);
+        WifiMode getMode();
     private:
         void handleNoConnection();
         void handleConnection();
+        void resetConfigAndResartWifi();
         int connectionAttempts = 0;
         int connectionAttemptsAllowed = 10;
         WiFiService *wifiService;
         ConfigFileService cFileService;
         WifiMode mode;
         std::list<std::function<void(void)>> onConnectionHandlers;
+        WebServer::EasyWebServer webServer;
     };
 
 };

@@ -2,16 +2,17 @@
 
 using namespace WiFiManagment;
 
+WifiManager::WifiManager(WebServer::EasyWebServer &wServer):webServer(wServer){};
+
 void WifiManager::startWifi(){
-    if(cFileService.hasConfigFile() && !cFileService.readConfigFile().startAPMode){
+    if(cFileService.hasConfigFile() && !cFileService.readConfigFile().startMode == AP_MODE){
         wifiService = new StationModeService(
+            webServer,
             [this](){handleNoConnection();},
             [this](){handleConnection();}
         );
-        mode = NORMAL_MODE;
     } else {
-        wifiService = new APModeService();
-        mode = AP_MODE;
+        wifiService = new APModeService(webServer);
     }
     wifiService->startWifi();
 };
@@ -20,13 +21,22 @@ void WifiManager::handleClient(){
     wifiService->handleClient();
 };
 
+WifiMode WifiManager::getMode(){
+    return wifiService->getMode();
+}
+
 void WifiManager::handleNoConnection(){
     connectionAttempts++;
     if(connectionAttempts > connectionAttemptsAllowed ){
-        cFileService.deleteConfigFile();
-        delete wifiService;
-        startWifi();
+        resetConfigAndResartWifi();
     }
+}
+
+void WifiManager::resetConfigAndResartWifi(){
+    cFileService.deleteConfigFile();
+    delete wifiService;
+    wifiService = nullptr;
+    startWifi();
 }
 
 void WifiManager::handleConnection(){

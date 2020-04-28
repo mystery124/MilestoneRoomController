@@ -11,21 +11,28 @@
 #include "ConfigFile.h"
 #include "ConfigFileService.h"
 #include "WiFiService.h"
+#include "EasyWebServer.h"
 
 namespace WiFiManagment {
 
     class APModeService : public WiFiService {
     public:
+        APModeService(WebServer::EasyWebServer &webServer);
         ~APModeService();
         virtual void startWifi();
+        virtual WifiMode getMode();
+
     private:
         virtual String getLocation();
-        virtual void startServer();
+        virtual void initWebServer();
         void startAPwifi();
+        void startDNSServer();
         void scanSSIDs();
         void saveConfig();
         int calculateWiFiSignalStrength(int32_t);
         ConfigFileService cFileService;
+        IPAddress acceessPointIP;
+        IPAddress mask;
     };
 
 };

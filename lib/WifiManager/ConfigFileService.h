@@ -4,6 +4,7 @@
 #include <FS.h>
 #include <ArduinoJson.h>
 
+#include "Logger.h"
 #include "ConfigFile.h"
 
 namespace WiFiManagment {
@@ -14,9 +15,11 @@ namespace WiFiManagment {
         ConfigFile& readConfigFile();
         bool deleteConfigFile();
         bool saveConfigFile(String&);
+        bool saveConfigFile(ConfigFile &configF);
         bool hasConfigFile();
 
         private:
+        bool cFilieInitialized = false;
         String cofingFilePath = "/c/config.json";
         ConfigFile cFile = {};
     };

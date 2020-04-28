@@ -15,15 +15,16 @@ namespace WiFiManagment {
 
     class StationModeService : public WiFiService {
     public:
-        StationModeService(std::function<void(void)> onDisconected, std::function<void(void)> onConnected);
+        StationModeService(WebServer::EasyWebServer &webServer, std::function<void(void)> onDisconected, std::function<void(void)> onConnected);
         ~StationModeService();
         virtual void startWifi();
+        virtual WifiMode getMode();
     private:
-        virtual void startServer();
+        virtual void initWebServer();
         virtual bool startMDNS();
         virtual String getLocation();
 
-        void startStationMode(ConfigFile&);
+        void startStationMode();
         void resetDevice();
         std::function<void(void)> onStationModeDisconnected;
         std::function<void(void)> onStationModeConnected;

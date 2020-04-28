@@ -9,7 +9,7 @@ namespace WiFiManagment {
         String SSID;
         String password;
         String nodeName;
-        bool startAPMode;
+        int startMode; // 0 - selfconfig; 1 - ap mode; 2 - station mode
     };
 
 };

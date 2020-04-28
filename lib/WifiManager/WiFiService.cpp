@@ -2,12 +2,12 @@
 
 using namespace WiFiManagment;
 
-WiFiService::WiFiService():webServer(80), dnsServer() {};
+WiFiService::WiFiService(WebServer::EasyWebServer &server):webServer(server), dnsServer() {}
 
 WiFiService::~WiFiService(){};
 
 bool WiFiService::startMDNS(){
-    bool result = MDNS.begin(defaultDeviceName);
+    bool result = MDNS.begin(defaultDeviceName, WiFi.localIP());
     MDNS.addService("http", "tcp", 80);
     return result;
 };
@@ -17,20 +17,16 @@ void WiFiService::startSPIFSS(){
 }
 
 void WiFiService::handleRoot() {
-    String rootPath = getLocation() + "/index.html";
-    File file = SPIFFS.open(rootPath,"r");
-    webServer.streamFile(file, "text/html");
-    file.close();
+    handleFileRead("/index.html");
 };
 
-void WiFiService::startServer(){
-    webServer.onNotFound( [this](){
+void WiFiService::initWebServer(){
+    webServer.attachCallHandler("/", HTTP_GET, [this](){handleRoot();});
+    webServer.attachNotFoundHandler( [this](){
         if(!handleFileRead(webServer.uri())){
-            webServer.send(404, "text/plain", "404: Not Found");
+            handleRoot();
         }
     });
-    webServer.on("/", HTTP_GET, [this](){handleRoot();});
-    webServer.begin();
 };
 
 String WiFiService::getContentType(String filename) {
@@ -65,11 +61,11 @@ bool WiFiService::handleFileRead(String path) {
 
 void WiFiService::handleClient(){
     dnsServer.processNextRequest();
-    webServer.handleClient();
+    MDNS.update();
 }
 
 void WiFiService::restartDevice(){
-    webServer.send(200, "text/plain", "OK");
+    webServer.sendServerResponse(200, "text/plain", "OK");
     delay(2000);
     ESP.restart();
 };

@@ -2,37 +2,40 @@
 
 using namespace WiFiManagment;
 
+APModeService::APModeService(WebServer::EasyWebServer &wServer):WiFiService(wServer), acceessPointIP(192,168,1,1), mask(255,255,255,0){};
+
 APModeService::~APModeService(){};
 
 void APModeService::startWifi(){
     startAPwifi();
+    delay(10);
+    startDNSServer();
     startMDNS();
     startSPIFSS();
-    startServer();
+    initWebServer();
 };
 
 void APModeService::startAPwifi(){
-    IPAddress apIP(192, 168, 1, 1);
-    IPAddress mask(255, 255, 255, 0);
     WiFi.hostname(defaultDeviceName);
     WiFi.mode(WIFI_AP);
-    WiFi.softAPConfig(apIP, apIP, mask);
+    WiFi.softAPConfig(acceessPointIP, acceessPointIP, mask);
     WiFi.softAP(defaultDeviceName, defaultPassword, 1, 0, 1);
-    dnsServer.start(dnsPort, "*", apIP);
+};
+
+void APModeService::startDNSServer(){
+    dnsServer.start(dnsPort, "*", acceessPointIP);
 };
 
 String APModeService::getLocation(){
     return "/d";
 };
 
-void APModeService::startServer(){
-    webServer.on("/getSSIDs", HTTP_GET, [this](){scanSSIDs();});
-    webServer.on("/saveConfig", HTTP_POST, [this](){saveConfig();});
-    webServer.on("/restart", HTTP_POST, [this](){restartDevice();});
-    webServer.on("/generate_204", HTTP_POST, [this](){handleRoot();});
-    webServer.on("/fwlink", HTTP_POST, [this](){handleRoot();});
+void APModeService::initWebServer(){
+    webServer.attachCallHandler("/getSSIDs", HTTP_GET, [this](){scanSSIDs();});
+    webServer.attachCallHandler("/saveConfig", HTTP_POST, [this](){saveConfig();});
+    webServer.attachCallHandler("/restart", HTTP_POST, [this](){restartDevice();});
 
-    WiFiService::startServer();
+    WiFiService::initWebServer();
 };
 
 void APModeService::scanSSIDs(){
@@ -46,7 +49,7 @@ void APModeService::scanSSIDs(){
         doc["ssids"][i]["channel"] = WiFi.channel(i);
     }
     String response = doc.as<String>();
-    webServer.send(200, "application/json", response); 
+    webServer.sendServerResponse(200, "application/json", response); 
 }
 
 int APModeService::calculateWiFiSignalStrength(int32_t strength ){
@@ -69,12 +72,15 @@ void APModeService::saveConfig(){
     String ssidParamName = "SSID";
     String passParamName = "password";
     String deviceNameParamName = "nodeName";
-    //TODO - parse message to verify format
     if(webServer.args() > 0 ) {
         String requestBody = webServer.arg("plain");
         cFileService.saveConfigFile(requestBody);
-        webServer.send(200, "text/plain", "OK");
+        webServer.sendServerResponse(200, "text/plain", "OK");
     } else {
-        webServer.send(400, "text/plain", "400: Invalid Request");
+        webServer.sendServerResponse(400, "text/plain", "400: Invalid Request");
     }
+};
+
+WifiMode APModeService::getMode(){
+    return AP_MODE;
 };
